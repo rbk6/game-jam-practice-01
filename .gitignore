@@ -1,0 +1,18 @@
+# godot specific ignores
+.godot/
+.nomedia
+.import/
+export.cfg
+export_credentials.cfg
+
+# imported translations (automatically generated from CSV files)
+*.translation
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# logs and temp files
+*.log
+*.tmp
