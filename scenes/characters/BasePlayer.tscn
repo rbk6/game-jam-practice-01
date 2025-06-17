@@ -1,10 +1,33 @@
-[gd_scene load_steps=2 format=3 uid="uid://bjuwvc2plvjv6"]
+[gd_scene load_steps=5 format=3 uid="uid://bjuwvc2plvjv6"]
+
+[ext_resource type="Script" uid="uid://cqgheuw63firl" path="res://scripts/characters/PlayerController.gd" id="1_mh3hr"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lcw04"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mh3hr"]
+albedo_color = Color(1, 0.541176, 0.513726, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mh3hr"]
+material = SubResource("StandardMaterial3D_mh3hr")
+size = Vector3(0.75, 1.5, 0.75)
+
 [node name="BasePlayer" type="CharacterBody3D"]
+script = ExtResource("1_mh3hr")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_lcw04")
 
 [node name="CharacterModel" type="Node3D" parent="."]
+
+[node name="Placeholder" type="MeshInstance3D" parent="CharacterModel"]
+mesh = SubResource("BoxMesh_mh3hr")
+
+[node name="CameraController" type="Node3D" parent="."]
+
+[node name="CameraTarget" type="Node3D" parent="CameraController"]
+transform = Transform3D(0.965926, -0.129409, 0.224144, 0, 0.866025, 0.5, -0.258819, -0.482963, 0.836516, 3, 6, 9)
+
+[node name="Camera3D" type="Camera3D" parent="CameraController/CameraTarget"]
+projection = 1
+current = true
+size = 10.0
