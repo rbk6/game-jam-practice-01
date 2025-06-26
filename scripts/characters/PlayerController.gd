@@ -1,5 +1,8 @@
 extends CharacterBody3D
 
+# Movement
+var last_move_direction := Vector3.FORWARD
+
 # Dash
 var is_dashing = false
 var dash_timer = 0.0
@@ -15,6 +18,8 @@ func _physics_process(delta: float) -> void:
 	handle_movement(delta)
 	apply_gravity(delta)
 	move_and_slide()
+
+	print(dash_cooldown_timer)
 
 
 # --------------------------------------------------------------------------- #
@@ -46,10 +51,6 @@ func handle_movement(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 			velocity.y = Constants.JUMP_VELOCITY
 
-	# handle dash
-	if Input.is_action_just_pressed("dash") and dash_cooldown_timer == 0.0:
-		start_dash()
-
 	# get input, set speed
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var move_speed = Constants.DASH_SPEED if is_dashing else Constants.SPEED
@@ -59,6 +60,7 @@ func handle_movement(delta: float) -> void:
 		var direction = Vector3(input_dir.x, 0, input_dir.y).normalized()
 		var rotation_basis = Basis(Vector3.UP, camera_target.rotation.y) * direction
 		direction = rotation_basis.normalized()
+		last_move_direction = direction
 
 		# apply to velocity
 		velocity.x = direction.x * move_speed
@@ -67,9 +69,16 @@ func handle_movement(delta: float) -> void:
 		# rotate model to input direction
 		var target_rotation_y = atan2(-direction.x, -direction.z)
 		model.rotation.y = lerp_angle(model.rotation.y, target_rotation_y, delta * 15)
+	elif is_dashing:
+		velocity.x = last_move_direction.x * move_speed
+		velocity.z = last_move_direction.z * move_speed
 	else:
 		velocity.x = move_toward(velocity.x, 0, Constants.SPEED)
 		velocity.z = move_toward(velocity.z, 0, Constants.SPEED)
+
+	# handle dash
+	if Input.is_action_just_pressed("dash") and dash_cooldown_timer == 0.0:
+		start_dash()
 
 func apply_gravity(delta: float) -> void:
 	if not is_on_floor():
